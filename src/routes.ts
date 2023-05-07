@@ -1,6 +1,6 @@
 import express, { Request, Response } from "express";
 import passport from "./passport";
-import { body } from "express-validator";
+import { body, validationResult } from "express-validator";
 import bcrypt from "bcrypt";
 import { User } from "./models/User";
 
@@ -15,8 +15,20 @@ router.post(
     body("password").isLength({ min: 6 }),
   ],
   async (req: Request, res: Response) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
     try {
       const { username, email, password } = req.body;
+
+      const existingUser = await User.findOne({ where: { email } });
+      if (existingUser) {
+        return res
+          .status(409)
+          .json({ error: "User with this username or email already exists" });
+      }
 
       const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -35,14 +47,22 @@ router.post(
   }
 );
 
-// Login a user
-router.post(
-  "/login",
-  passport.authenticate("basic", { session: false }),
-  (req, res) => {
-    res.json({ message: "Logged in successfully", user: req.user });
-  }
-);
+router.post("/login", (req, res, next) => {
+  passport.authenticate("basic", { session: false }, (err: any, user: any) => {
+    if (err) {
+      return next(err);
+    }
+    if (!user) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+    req.logIn(user, { session: false }, (err) => {
+      if (err) {
+        return next(err);
+      }
+      return res.json({ message: "Logged in successfully", user });
+    });
+  })(req, res, next);
+});
 
 // List all users
 router.get("/users", async (_, res) => {
