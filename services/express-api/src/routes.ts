@@ -3,6 +3,7 @@ import passport from "./passport";
 import { body, validationResult } from "express-validator";
 import bcrypt from "bcrypt";
 import { User } from "./models/User";
+import isAuthenticated from "./middleware";
 
 const router = express.Router();
 
@@ -47,25 +48,40 @@ router.post(
   }
 );
 
+// Login
 router.post("/login", (req, res, next) => {
-  passport.authenticate("basic", { session: false }, (err: any, user: any) => {
+  passport.authenticate("basic", { session: true }, (err: any, user: any) => {
     if (err) {
       return next(err);
     }
     if (!user) {
       return res.status(401).json({ error: "Unauthorized" });
     }
-    req.logIn(user, { session: false }, (err) => {
+
+    req.logIn(user, (err) => {
       if (err) {
         return next(err);
       }
+      const session = req.session as unknown as { userId: number };
+      session.userId = user.id;
       return res.json({ message: "Logged in successfully", user });
     });
   })(req, res, next);
 });
 
+// Logout
+router.post("/api/logout", (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      res.status(500).json({ message: "Error logging out" });
+    } else {
+      res.json({ message: "Logged out successfully" });
+    }
+  });
+});
+
 // List all users
-router.get("/users", async (_, res) => {
+router.get("/users", isAuthenticated, async (_, res) => {
   try {
     const users = await User.findAll();
     res.json(users);
@@ -73,6 +89,15 @@ router.get("/users", async (_, res) => {
     if (error instanceof Error) {
       res.status(500).json({ error: error.message });
     }
+  }
+});
+
+router.get("/api/checkAuth", (req, res) => {
+  const session = req.session as unknown as { userId: number };
+  if (session.userId) {
+    res.json({ isAuthenticated: true });
+  } else {
+    res.json({ isAuthenticated: false });
   }
 });
 

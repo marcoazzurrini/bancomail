@@ -3,6 +3,7 @@ import sequelize from "./database";
 import router from "./routes";
 import env from "./env";
 import cors from "cors";
+import session from "express-session";
 
 const maxRetries = 5;
 const retryInterval = 5000; // 5 seconds
@@ -36,6 +37,18 @@ app.use(
 );
 app.use(express.json());
 app.use("/api", router);
+app.use(
+  session({
+    secret: env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      maxAge: 3600000, // 1 hour
+      secure: false,
+      httpOnly: true,
+    },
+  })
+);
 
 app.get("/", (_, res) => {
   res.send("Hello World!");

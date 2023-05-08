@@ -9,6 +9,7 @@ const envSchema = z.object({
   DB_USER_PASSWORD: z.string().nonempty(),
   DB_ROOT_PASSWORD: z.string().nonempty(),
   DB_HOST: z.string().nonempty(),
+  SESSION_SECRET: z.string().nonempty(),
   PORT: z.string().nonempty(),
 });
 

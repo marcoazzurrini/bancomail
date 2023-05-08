@@ -50,3 +50,15 @@ export async function fetchUsers() {
 
   return response.json();
 }
+
+export async function checkAuthStatus() {
+  try {
+    const response = await fetch(`${apiUrl}/checkAuth`, {
+      credentials: "include",
+    });
+    const data = await response.json();
+    return data.isAuthenticated;
+  } catch (error) {
+    return false;
+  }
+}
