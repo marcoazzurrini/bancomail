@@ -1,4 +1,4 @@
-const apiUrl = "http://localhost:8080/api/";
+const apiUrl = "http://localhost:8080/api";
 
 export async function register(
   username: string,
@@ -23,10 +23,12 @@ export async function register(
 export async function login(email: string, password: string) {
   const response = await fetch(`${apiUrl}/login`, {
     method: "POST",
+    body: JSON.stringify({ email, password }),
     headers: {
       "Content-Type": "application/json",
-      Authorization: "Basic " + btoa(email + ":" + password),
+      // Authorization: "Basic " + btoa(email + ":" + password),
     },
+    credentials: "include", // Include credentials to enable sessions
   });
 
   if (!response.ok) {
@@ -42,6 +44,7 @@ export async function fetchUsers() {
     headers: {
       "Content-Type": "application/json",
     },
+    credentials: "include",
   });
 
   if (!response.ok) {

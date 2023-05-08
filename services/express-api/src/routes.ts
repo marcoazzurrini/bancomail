@@ -6,6 +6,8 @@ import { User } from "./models/User";
 import isAuthenticated from "./middleware";
 
 const router = express.Router();
+router.use(passport.initialize());
+router.use(passport.session());
 
 // Register a new user
 router.post(
@@ -50,7 +52,7 @@ router.post(
 
 // Login
 router.post("/login", (req, res, next) => {
-  passport.authenticate("basic", { session: true }, (err: any, user: any) => {
+  passport.authenticate("local", { session: true }, (err: any, user: any) => {
     if (err) {
       return next(err);
     }
@@ -68,9 +70,28 @@ router.post("/login", (req, res, next) => {
     });
   })(req, res, next);
 });
+// router.post("/login", (req, res, next) => {
+//   passport.authenticate("basic", { session: true }, (err: any, user: any) => {
+//     if (err) {
+//       return next(err);
+//     }
+//     if (!user) {
+//       return res.status(401).json({ error: "Unauthorized" });
+//     }
+//
+//     req.logIn(user, (err) => {
+//       if (err) {
+//         return next(err);
+//       }
+//       const session = req.session as unknown as { userId: number };
+//       session.userId = user.id;
+//       return res.json({ message: "Logged in successfully", user });
+//     });
+//   })(req, res, next);
+// });
 
 // Logout
-router.post("/api/logout", (req, res) => {
+router.post("/logout", (req, res) => {
   req.session.destroy((err) => {
     if (err) {
       res.status(500).json({ message: "Error logging out" });
@@ -92,7 +113,7 @@ router.get("/users", isAuthenticated, async (_, res) => {
   }
 });
 
-router.get("/api/checkAuth", (req, res) => {
+router.get("/checkAuth", (req, res) => {
   const session = req.session as unknown as { userId: number };
   if (session.userId) {
     res.json({ isAuthenticated: true });
