@@ -26,9 +26,8 @@ export async function login(email: string, password: string) {
     body: JSON.stringify({ email, password }),
     headers: {
       "Content-Type": "application/json",
-      // Authorization: "Basic " + btoa(email + ":" + password),
     },
-    credentials: "include", // Include credentials to enable sessions
+    credentials: "include",
   });
 
   if (!response.ok) {
