@@ -2,6 +2,8 @@ import express from "express";
 import sequelize from "./database";
 import router from "./routes";
 import env from "./env";
+import cors from "cors";
+
 const maxRetries = 5;
 const retryInterval = 5000; // 5 seconds
 
@@ -24,17 +26,14 @@ async function connectWithRetry(retriesRemaining: number) {
 }
 
 connectWithRetry(maxRetries);
-// sequelize
-//   .sync()
-//   .then(() => {
-//     console.log("Database synced");
-//   })
-//   .catch((error) => {
-//     console.error("Error syncing database:", error);
-//   });
 
 const app = express();
 
+app.use(
+  cors({
+    origin: ["http://localhost:5173"],
+  })
+);
 app.use(express.json());
 app.use("/api", router);
 
