@@ -18,7 +18,7 @@ RUN pnpm install --frozen-lockfile
 COPY . .
 
 # Copy the .env file from the root of the project
-COPY ../.env ./
+# COPY .env ./
 
 # Expose the application port
 EXPOSE 8080

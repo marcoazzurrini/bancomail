@@ -21,5 +21,7 @@ COPY . .
 EXPOSE 5173
 
 # Start the application
-CMD ["pnpm", "dev"]
+CMD ["pnpm", "run", "dev","--host"]
+
+
 
