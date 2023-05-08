@@ -10,14 +10,15 @@ This project is a full-stack application built with React, Express, and MySQL, a
 
 ## Configuration
 
-- Create a .env file at the root of the project with the following variables:
-  DB_ROOT_PASSWORD=<your_db_root_password>
-  DB_NAME=<your_db_name>
-  DB_USER=<your_db_user>
-  DB_USER_PASSWORD=<your_db_user_password>
-  DB_HOST=db -> this should be db is using with docker
-  PORT=8080
-  SESSION_SECRET=<your_secret>
+Create a .env file at the root of the project with the following variables:
+
+- DB_ROOT_PASSWORD=<your_db_root_password>
+- DB_NAME=<your_db_name>
+- DB_USER=<your_db_user>
+- DB_USER_PASSWORD=<your_db_user_password>
+- DB_HOST=db -> this should be db is using with docker
+- PORT=8080
+- SESSION_SECRET=<your_secret>
 
 ## Running the Application
 
