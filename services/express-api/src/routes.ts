@@ -70,25 +70,6 @@ router.post("/login", (req, res, next) => {
     });
   })(req, res, next);
 });
-// router.post("/login", (req, res, next) => {
-//   passport.authenticate("basic", { session: true }, (err: any, user: any) => {
-//     if (err) {
-//       return next(err);
-//     }
-//     if (!user) {
-//       return res.status(401).json({ error: "Unauthorized" });
-//     }
-//
-//     req.logIn(user, (err) => {
-//       if (err) {
-//         return next(err);
-//       }
-//       const session = req.session as unknown as { userId: number };
-//       session.userId = user.id;
-//       return res.json({ message: "Logged in successfully", user });
-//     });
-//   })(req, res, next);
-// });
 
 // Logout
 router.post("/logout", (req, res) => {
